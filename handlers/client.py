@@ -2,6 +2,7 @@ from create_bot import dp, bot
 from aiogram import types, Dispatcher
 from keyboards import kb_client
 from aiogram.types import ReplyKeyboardRemove
+from data_base import sqlite_db
 
 
 # @dp.message_handler(commands=['start', 'help'])
@@ -25,7 +26,14 @@ async def milk_factory_places_command(message : types.Message):
                                                   вул. Біблика, 74', reply_markup=ReplyKeyboardRemove())
 
 
+@dp.message_handler(commands=['Menu'])
+async def milk_factory_menu_command(message: types.Message):
+    await sqlite_db.sql_read(message)
+
+
+
 def register_handlers_client(dp : Dispatcher):
     dp.register_message_handler(command_start, commands=['start', 'help'])
     dp.register_message_handler(milk_factory_open_command, commands=['Mode'])
     dp.register_message_handler(milk_factory_places_command, commands=['Place'])
+    dp.register_message_handler(milk_factory_menu_command, commands=['Menu'])
