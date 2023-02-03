@@ -8,4 +8,4 @@ b3 = KeyboardButton('/Menu')
 
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True)
 
-kb_client.add(b1).add(b2).insert(b3)#.row(b4, b5)
+kb_client.add(b1).ad77d(b2).insert(b3)#.row(b4, b5)

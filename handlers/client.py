@@ -8,8 +8,8 @@ from data_base import sqlite_db
 # @dp.message_handler(commands=['start', 'help'])
 async def command_start(message: types.Message):
     try:
-        await bot.send_message(message.from_user.id, 'Вітаємо! Цей бот допоможе Вам зробити замовлення продуктів \
-                                                     дитячого харчування', reply_markup=kb_client)
+        await bot.send_message(message.from_user.id, f'Вітаємо, {message.from_user.first_name}! Цей бот допоможе \
+                               Вам зробити замовлення продуктів дитячого харчування', reply_markup=kb_client)
         await message.delete()
     except:
         await message.reply('Спілкування з ботом через особисті повідомлення. Напишіть йому: \
