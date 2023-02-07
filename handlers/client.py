@@ -1,6 +1,6 @@
 from create_bot import dp, bot
 from aiogram import types, Dispatcher
-from keyboards import kb_client
+from keyboards import kb_client, client_kb
 from aiogram.types import ReplyKeyboardRemove
 from data_base import sqlite_db
 
@@ -28,7 +28,8 @@ async def milk_factory_places_command(message : types.Message):
 
 @dp.message_handler(commands=['Menu'])
 async def milk_factory_menu_command(message: types.Message):
-    await sqlite_db.sql_read(message)
+    await message.answer(text="Оберіть категорію товарів: ", reply_markup=client_kb.choice)
+    # await sqlite_db.sql_read(message)
 
 
 
