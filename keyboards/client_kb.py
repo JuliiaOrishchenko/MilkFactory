@@ -21,8 +21,9 @@ choice.insert(sushi)
 juices = InlineKeyboardButton(text='Соки', callback_data='menu_juice')
 choice.insert(juices)
 
-cancel_btn = InlineKeyboardButton(text="Відміна", callback_data="cancel")
-choice.insert(cancel_btn)
+back_mrk = InlineKeyboardMarkup(row_width=1)
+back_btn = InlineKeyboardButton(text='Назад', callback_data='back_to_categories')
+back_mrk.add(back_btn)
 
 
 kb_client.add(b1).add(b2).insert(b3)

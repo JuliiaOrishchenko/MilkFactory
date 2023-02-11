@@ -44,9 +44,13 @@ async def process_callback_data(call: types.CallbackQuery):
             await sqlite_db.sql_read(call.message.chat.id, 'Суші')
         case 'juice':
             await sqlite_db.sql_read(call.message.chat.id, 'Напої')
+    await call.message.answer(text='Для повернення у меню вибору: ', reply_markup=client_kb.back_mrk)
     await call.answer()
 
-
+@dp.callback_query_handler(Text(startswith='back_to_categories'))
+async def back_to_categories(call: types.CallbackQuery):
+    await call.message.answer(text='Оберіть категорію :', reply_markup=client_kb.choice)
+    await call.answer()
 
 def register_handlers_client(dp : Dispatcher):
     dp.register_message_handler(command_start, commands=['start', 'help'])
