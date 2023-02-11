@@ -15,7 +15,9 @@ class FSMAdmin(StatesGroup):
     photo = State()
     name = State()
     description = State()
+    category = State()
     price = State()
+
 
 
 # @dp.message_handler(commands=['moderator'], is_chat_admin=True)
@@ -71,6 +73,15 @@ async def load_description(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
         async with state.proxy() as data:
             data['description'] = message.text
+        await FSMAdmin.next()
+        await message.reply('Оберіть категорію')
+
+
+@dp.message_handler(state=FSMAdmin.category)
+async def load_category(message: types.Message, state: FSMContext):
+    if message.from_user.id == ID:
+        async with state.proxy() as data:
+            data['category'] = message.text
         await FSMAdmin.next()
         await message.reply('Тепер укажіть ціну')
 
