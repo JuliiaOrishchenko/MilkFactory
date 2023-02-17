@@ -10,14 +10,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 ID = None
 
 
-
 class FSMAdmin(StatesGroup):
     photo = State()
     name = State()
     description = State()
     category = State()
     price = State()
-
 
 
 # @dp.message_handler(commands=['moderator'], is_chat_admin=True)
@@ -28,7 +26,6 @@ async def make_changes_command(message: types.Message):
     await message.delete()
 
 
-#начало диалога для загрузки нового пункта меню
 # @dp.message_handler(commands='Download', state=None)
 async def cm_start(message: types.Message):
     if message.from_user.id == ID:
@@ -36,7 +33,6 @@ async def cm_start(message: types.Message):
         await message.reply('Завантажте фото')
 
 
-# выход из состояний
 # @dp.message_handler(state="*", commands='cancel')
 # @dp.message_handler(Text(equals='cancel', ignore_case=True), state="*")
 async def cancel_handler(message: types.Message, state: FSMContext):
@@ -48,7 +44,6 @@ async def cancel_handler(message: types.Message, state: FSMContext):
         await message.reply('OK')
 
 
-#ловим первый ответ и пишем в словарь
 # @dp.message_handler(content_types=['photo'], state=FSMAdmin.photo)
 async def load_photo(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
@@ -58,7 +53,6 @@ async def load_photo(message: types.Message, state: FSMContext):
         await message.reply('Тепер укажіть назву')
 
 
-# ловим второй ответ
 # @dp.message_handler(state=FSMAdmin.name)
 async def load_name(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
@@ -77,7 +71,7 @@ async def load_description(message: types.Message, state: FSMContext):
         await message.reply('Оберіть категорію')
 
 
-@dp.message_handler(commands=['add_menu'])
+# @dp.message_handler(commands=['add_menu'])
 async def add_menu(message: types.Message):
     inline_keyboard = InlineKeyboardMarkup(row_width=1)
     categories = ['Піца', 'Суші', 'Напої']
@@ -86,15 +80,8 @@ async def add_menu(message: types.Message):
     await message.reply('Оберіть категорію:', reply_markup=inline_keyboard)
     await FSMAdmin.category.set()
 
-# @dp.callback_query_handler(Text(startswith='category_'), state=FSMAdmin.category)
-# async def load_category(callback_query: types.CallbackQuery, state: FSMContext):
-#     category = callback_query.data.split('_')
-#     async with state.proxy() as data:
-#         data['category'] = category
-#     await FSMAdmin.next()
-#     await callback_query.message.reply('Тепер укажіть ціну')
 
-@dp.message_handler(state=FSMAdmin.category)
+# @dp.message_handler(state=FSMAdmin.category)
 async def load_category(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
         async with state.proxy() as data:
@@ -113,28 +100,32 @@ async def load_price(message: types.Message, state: FSMContext):
         await state.finish()
 
 
-@dp.callback_query_handler(lambda x: x.data and x.data.startswith('del '))
+# @dp.callback_query_handler(lambda x: x.data and x.data.startswith('del '))
 async def del_call_run(callback_query: types.CallbackQuery):
     await sqlite_db.sql_delete_command(callback_query.data.replace('del ', ''))
     await callback_query.answer(text=f'{callback_query.data.replace("del ", "")} видалена.', show_alert=True)
 
 
-@dp.message_handler(commands="Delete")
+# @dp.message_handler(commands="Delete")
 async def delete_item(message: types.Message):
     if message.from_user.id == ID:
         read = await sqlite_db.sql_read2()
         for ret in read:
             await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОпис: {ret[2]}\nЦіна {ret[-1]}')
-            await bot.send_message(message.from_user.id, text='^^^', reply_markup=InlineKeyboardMarkup()\
+            await bot.send_message(message.from_user.id, text='^^^', reply_markup=InlineKeyboardMarkup() \
                                    .add(InlineKeyboardButton(f'Видалити {ret[1]}', callback_data=f'del {ret[1]}')))
 
 
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(cm_start, commands=['Download'], state=None)
+    dp.register_message_handler(cancel_handler, state="*", commands='cancel')
     dp.register_message_handler(cancel_handler, Text(equals='cancel', ignore_case=True), state="*")
     dp.register_message_handler(make_changes_command, commands=['moderator'], is_chat_admin=True)
     dp.register_message_handler(load_photo, content_types=['photo'], state=FSMAdmin.photo)
     dp.register_message_handler(load_name, state=FSMAdmin.name)
     dp.register_message_handler(load_description, state=FSMAdmin.description)
     dp.register_message_handler(load_price, state=FSMAdmin.price)
-    dp.register_message_handler(cancel_handler, state="*", commands='cancel')
+    dp.register_message_handler(load_category, state=FSMAdmin.category)
+    dp.register_message_handler(add_menu, commands=['add_menu'])
+    dp.register_message_handler(del_call_run, lambda x: x.data and x.data.startswith('del '))
+    dp.register_message_handler(delete_item, commands="Delete")

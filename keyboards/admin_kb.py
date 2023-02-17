@@ -1,8 +1,9 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, \
+    ReplyKeyboardRemove
 
 # кнопки клавиатуры админа
-button_load = KeyboardButton('➕/Download')
-button_delete = KeyboardButton('❌/Delete')
+button_load = KeyboardButton('/Download')
+button_delete = KeyboardButton('/Delete')
 
 button_case_admin = ReplyKeyboardMarkup(resize_keyboard=True).add(button_load).add(button_delete)
 
