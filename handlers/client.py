@@ -129,9 +129,10 @@ async def back_to_categories(call: types.CallbackQuery):
 async def cart_button_handler(message: types.Message):
     # Отправляем пользователю список товаров в корзине
     cart_items = await sqlite_db.get_cart(user_id=message.chat.id)
-    cart_text = ["{0} {1} ".format(item[2], item[3]) for item in cart_items]
+    cart_text = ["{0} {1},00 грн ".format(item[2], item[3]) for item in cart_items]
     if cart_items:
-        await message.answer("Ваше замовлення:\n" + "\n".join(cart_text))
+        s = await sqlite_db.cart_get_sum()
+        await message.answer("Ваше замовлення:\n" + "\n".join(cart_text)+"\nЗагальна вартість "+ s + ",00 грн")
     else:
         await message.answer('Ви ще нічого не замовили')
 def register_handlers_client(dp : Dispatcher):

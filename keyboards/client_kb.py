@@ -2,10 +2,10 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
     InlineKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
 
-b1 = KeyboardButton('/Mode')
-b2 = KeyboardButton('/Place')
-b3 = KeyboardButton('/Menu')
-cart_btn = KeyboardButton('/Cart')
+b1 = KeyboardButton('🕕/Mode')
+b2 = KeyboardButton('🧭/Place')
+b3 = KeyboardButton('📖/Menu')
+cart_btn = KeyboardButton('🛒/Cart')
 
 start_btn = KeyboardButton('Start')
 start_kb = ReplyKeyboardMarkup(keyboard=start_btn, resize_keyboard=True, selective=True)
@@ -13,15 +13,15 @@ kb_client = ReplyKeyboardMarkup(resize_keyboard=True)
 
 
 choice = InlineKeyboardMarkup(row_width=3)
-pizza = InlineKeyboardButton(text='Піцца', callback_data='menu_pizza')
+pizza = InlineKeyboardButton(text='🍕 Піцца', callback_data='menu_pizza')
 choice.insert(pizza)
-sushi = InlineKeyboardButton(text='Суші', callback_data='menu_sushi')
+sushi = InlineKeyboardButton(text='🍣 Суші', callback_data='menu_sushi')
 choice.insert(sushi)
-juices = InlineKeyboardButton(text='Соки', callback_data='menu_juice')
+juices = InlineKeyboardButton(text='🥤 Соки', callback_data='menu_juice')
 choice.insert(juices)
 
 back_mrk = InlineKeyboardMarkup(row_width=1)
-back_btn = InlineKeyboardButton(text='Назад', callback_data='back_to_categories')
+back_btn = InlineKeyboardButton(text='🔙 Назад', callback_data='back_to_categories')
 back_mrk.add(back_btn)
 
 buy = InlineKeyboardMarkup()

@@ -66,7 +66,15 @@ async def empty_cart(user_id):
         return cur.execute('DELETE FROM cart WHERE user_id=(?)', [user_id])
 
 
-
+async def cart_get_sum():
+    con = sq.connect('pizza_sushi.db')
+    cur = con.cursor()
+    cur.execute("SELECT SUM(CAST(REPLACE(price, 'грн', '') AS DECIMAL(10, 2))) FROM cart")
+    sum = cur.fetchone()[0]
+    sum_str = str(sum)
+    cur.close()
+    con.close()
+    return sum_str
 
 async def sql_read3(category):
     try:
