@@ -7,7 +7,7 @@ async def on_startup(_):
     print('Bot is online')
     sqlite_db.sql_start()
 
-from handlers import client, admin, other
+from handlers import client, admin
 
 client.register_handlers_client(dp)
 admin.register_handlers_admin(dp)

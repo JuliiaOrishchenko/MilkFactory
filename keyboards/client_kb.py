@@ -2,10 +2,10 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
     InlineKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
 
-b1 = KeyboardButton('🕕/Mode')
-b2 = KeyboardButton('🧭/Place')
-b3 = KeyboardButton('📖/Menu')
-cart_btn = KeyboardButton('🛒/Cart')
+b1 = KeyboardButton('Режим роботи')
+b2 = KeyboardButton('Місцезнаходження')
+b3 = KeyboardButton('Меню')
+cart_btn = KeyboardButton('Ваше замовлення')
 
 start_btn = KeyboardButton('Start')
 start_kb = ReplyKeyboardMarkup(keyboard=start_btn, resize_keyboard=True, selective=True)
@@ -24,9 +24,9 @@ back_mrk = InlineKeyboardMarkup(row_width=1)
 back_btn = InlineKeyboardButton(text='🔙 Назад', callback_data='back_to_categories')
 back_mrk.add(back_btn)
 
-buy = InlineKeyboardMarkup()
-buy_btn = InlineKeyboardButton(text='Купити', callback_data='buy')
-buy.add(buy_btn)
+# buy = InlineKeyboardMarkup()
+# buy_btn = InlineKeyboardButton(text='Замовити', callback_data='buy')
+# buy.add(buy_btn)
 
 kb_client.add(b3).insert(cart_btn).add(b1).insert(b2)
 

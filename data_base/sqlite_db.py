@@ -1,5 +1,5 @@
 import sqlite3 as sq
-from create_bot import dp, bot
+from create_bot import bot
 from keyboards import client_kb
 
 def sql_start():
@@ -35,9 +35,9 @@ async def get_products(category):
         return cur.execute(f'SELECT * FROM menu WHERE category="{category}"').fetchall()
 
 
-async def get_user_product(name):
-    with sq.connect('pizza_sushi.db'):
-        return cur.execute('SELECT * FROM menu WHERE name = (?)', [name]).fetchall()
+# async def get_user_product(name):
+#     with sq.connect('pizza_sushi.db'):
+#         return cur.execute('SELECT * FROM menu WHERE name = (?)', [name]).fetchall()
 
 async def get_cart(user_id):
     con = sq.connect('pizza_sushi.db')
@@ -61,9 +61,9 @@ async def add_to_cart(user_id, product_name, price):
     cur.close()
     con.close()
 
-async def empty_cart(user_id):
-    with sq.connect('pizza_sushi.db'):
-        return cur.execute('DELETE FROM cart WHERE user_id=(?)', [user_id])
+# async def empty_cart(user_id):
+#     with sq.connect('pizza_sushi.db'):
+#         return cur.execute('DELETE FROM cart WHERE user_id=(?)', [user_id])
 
 
 async def cart_get_sum():
@@ -76,16 +76,16 @@ async def cart_get_sum():
     con.close()
     return sum_str
 
-async def sql_read3(category):
-    try:
-        cur.execute(f"SELECT * FROM Menu WHERE Category='{category}'")
-        records = cur.fetchall()
-        for rec in records:
-            photo_url, name, description, price, category = rec
-            return rec[1]
-    except sq.Error as error:
-        print(f"Error while reading data from the database: {error}")
-        return []
+# async def sql_read3(category):
+#     try:
+#         cur.execute(f"SELECT * FROM Menu WHERE Category='{category}'")
+#         records = cur.fetchall()
+#         for rec in records:
+#             photo_url, name, description, price, category = rec
+#             return rec[1]
+#     except sq.Error as error:
+#         print(f"Error while reading data from the database: {error}")
+#         return []
 
 
 

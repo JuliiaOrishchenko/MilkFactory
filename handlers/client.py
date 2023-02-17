@@ -8,7 +8,7 @@ from aiogram.dispatcher.filters import Text
 from data_base import sqlite_db
 
 
-cart = []
+# cart = []
 
 
  # @dp.message_handler(commands='start')
@@ -25,16 +25,16 @@ async def command_start(message: types.Message):
                              \nhttps://t.me/Milk_FactoryBot')
 
 
-# @dp.message_handler(commands=['Режим роботи'])
+@dp.message_handler(lambda message: message.text == 'Режим роботи')
 async def pizza_open_command(message: types.Message):
     await bot.send_message(message.from_user.id, 'Пн-Пт з 8.30 до 22.30, Сб-Нд з 8.30 до 23.00')
 
-# @dp.message_handler(commands=['Місцезнаходження точок видачі'])
+@dp.message_handler(lambda message: message.text == 'Місцезнаходження')
 async def pizza_place_command(message: types.Message):
     await bot.send_message(message.from_user.id, 'м. Харків, вул. Тракторобудівників, 18', reply_markup=ReplyKeyboardRemove())
 
 
-# @dp.message_handler(commands=['Menu'])
+@dp.message_handler(lambda message: message.text == 'Меню')
 async def pizza_menu_command(message: types.Message):
     await message.answer(text="Оберіть категорію : ", reply_markup=client_kb.choice)
 
@@ -48,36 +48,49 @@ cb = CallbackData('btn', 'type', 'product_name', 'price')
 #     await message.answer("Что хотите купить? ", reply_markup=keyboard)
 
 
+# @dp.callback_query_handler(Text(startswith='menu_'))
+# async def process_callback_data(call: types.CallbackQuery):
+#     res = str(call.data.split('_')[1])
+#     match res:
+#         case 'pizza':
+#             data = await sqlite_db.get_products('Піцца')
+#             for x in data:
+#                 photo_url, name, description, category, price = x
+#                 caption = f'{x[1]}\nОпис: {x[2]}\nЦіна {x[-1]}'
+#                 keyboard = InlineKeyboardMarkup()
+#                 keyboard.add(InlineKeyboardButton(text='Купити', callback_data=cb.new(type='buy', product_name=name, price=price)))
+#                 await bot.send_photo(call.message.chat.id, photo_url, caption, reply_markup=keyboard)
+#         case 'sushi':
+#             data = await sqlite_db.get_products('Суші')
+#             for x in data:
+#                 photo_url, name, description, category, price = x
+#                 caption = f'{x[1]}\nОпис: {x[2]}\nЦіна {x[-1]}'
+#                 keyboard = InlineKeyboardMarkup()
+#                 keyboard.add(InlineKeyboardButton(text='Купити', callback_data=f'btn:buy:{name}:{price}'))
+#                 await bot.send_photo(call.message.chat.id, photo_url, caption,  reply_markup=keyboard)
+#         case 'juice':
+#             data = await sqlite_db.get_products('Напої')
+#             for x in data:
+#                 photo_url, name, description, category, price = x
+#                 caption = f'{x[1]}\nОпис: {x[2]}\nЦіна {x[-1]}'
+#                 keyboard = InlineKeyboardMarkup()
+#                 keyboard.add(InlineKeyboardButton(text='Купити', callback_data=f'btn:buy:{name}:{price}'))
+#                 await bot.send_photo(call.message.chat.id, photo_url, caption,  reply_markup=keyboard)
+#     await call.message.answer(text='Інша категорія: ', reply_markup=client_kb.back_mrk)
+#     # await call.message.answer(text='Оберіть товар: ', reply_markup=client_kb.buy)
+#     await call.answer()
 @dp.callback_query_handler(Text(startswith='menu_'))
 async def process_callback_data(call: types.CallbackQuery):
-    res = str(call.data.split('_')[1])
-    match res:
-        case 'pizza':
-            data = await sqlite_db.get_products('Піцца')
-            for x in data:
-                photo_url, name, description, category, price = x
-                caption = f'{x[1]}\nОпис: {x[2]}\nЦіна {x[-1]}'
-                keyboard = InlineKeyboardMarkup()
-                keyboard.add(InlineKeyboardButton(text='Купити', callback_data=cb.new(type='buy', product_name=name, price=price)))
-                await bot.send_photo(call.message.chat.id, photo_url, caption, reply_markup=keyboard)
-        case 'sushi':
-            data = await sqlite_db.get_products('Суші')
-            for x in data:
-                photo_url, name, description, category, price = x
-                caption = f'{x[1]}\nОпис: {x[2]}\nЦіна {x[-1]}'
-                keyboard = InlineKeyboardMarkup()
-                keyboard.add(InlineKeyboardButton(text='Купити', callback_data=f'btn:buy:{name}:{price}'))
-                await bot.send_photo(call.message.chat.id, photo_url, caption,  reply_markup=keyboard)
-        case 'juice':
-            data = await sqlite_db.get_products('Напої')
-            for x in data:
-                photo_url, name, description, category, price = x
-                caption = f'{x[1]}\nОпис: {x[2]}\nЦіна {x[-1]}'
-                keyboard = InlineKeyboardMarkup()
-                keyboard.add(InlineKeyboardButton(text='Купити', callback_data=f'btn:buy:{name}:{price}'))
-                await bot.send_photo(call.message.chat.id, photo_url, caption,  reply_markup=keyboard)
+    category = call.data.split('_')[1]
+    categories = {'pizza': 'Піцца', 'sushi': 'Суші', 'juice': 'Напої'}
+    products = await sqlite_db.get_products(categories[category])
+    for product in products:
+        photo_url, name, description, category, price = product
+        caption = f'{name}\nОпис: {description}\nЦіна: {price}'
+        keyboard = InlineKeyboardMarkup()
+        keyboard.add(InlineKeyboardButton(text='Замовити', callback_data=f'btn:buy:{name}:{price}'))
+        await bot.send_photo(call.message.chat.id, photo_url, caption, reply_markup=keyboard)
     await call.message.answer(text='Інша категорія: ', reply_markup=client_kb.back_mrk)
-    # await call.message.answer(text='Оберіть товар: ', reply_markup=client_kb.buy)
     await call.answer()
 
 @dp.callback_query_handler(cb.filter(type='buy'))
@@ -125,7 +138,7 @@ async def back_to_categories(call: types.CallbackQuery):
 
 
 # Обработчик событий для кнопки "Корзина"
-@dp.message_handler(commands=['Cart'])
+@dp.message_handler(lambda message: message.text == 'Ваше замовлення')
 async def cart_button_handler(message: types.Message):
     # Отправляем пользователю список товаров в корзине
     cart_items = await sqlite_db.get_cart(user_id=message.chat.id)

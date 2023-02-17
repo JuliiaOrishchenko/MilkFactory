@@ -86,21 +86,21 @@ async def add_menu(message: types.Message):
     await message.reply('Оберіть категорію:', reply_markup=inline_keyboard)
     await FSMAdmin.category.set()
 
-@dp.callback_query_handler(Text(startswith='category_'), state=FSMAdmin.category)
-async def load_category(callback_query: types.CallbackQuery, state: FSMContext):
-    _, category = callback_query.data.split('_')
-    async with state.proxy() as data:
-        data['category'] = category
-    await FSMAdmin.next()
-    await callback_query.message.reply('Тепер укажіть ціну')
+# @dp.callback_query_handler(Text(startswith='category_'), state=FSMAdmin.category)
+# async def load_category(callback_query: types.CallbackQuery, state: FSMContext):
+#     category = callback_query.data.split('_')
+#     async with state.proxy() as data:
+#         data['category'] = category
+#     await FSMAdmin.next()
+#     await callback_query.message.reply('Тепер укажіть ціну')
 
-# @dp.message_handler(state=FSMAdmin.category)
-# async def load_category(message: types.Message, state: FSMContext):
-#     if message.from_user.id == ID:
-#         async with state.proxy() as data:
-#             data['category'] = message.text
-#         await FSMAdmin.next()
-#         await message.reply('Тепер укажіть ціну')
+@dp.message_handler(state=FSMAdmin.category)
+async def load_category(message: types.Message, state: FSMContext):
+    if message.from_user.id == ID:
+        async with state.proxy() as data:
+            data['category'] = message.text
+        await FSMAdmin.next()
+        await message.reply('Тепер укажіть ціну')
 
 
 # @dp.message_handler(state=FSMAdmin.price)
@@ -108,8 +108,8 @@ async def load_price(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
         async with state.proxy() as data:
             data['price'] = float(message.text)
-
         await sqlite_db.sql_add_command(state)
+        await message.answer(text=f'Позицію "{data["name"]}" успішно додано до меню')
         await state.finish()
 
 
